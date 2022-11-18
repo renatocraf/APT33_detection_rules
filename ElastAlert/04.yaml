@@ -1,0 +1,45 @@
+# Schedule Task 
+# Regra 3: Schedule Task executou um VBScript
+name: regra3
+type: any
+realert:
+  minutes : 0
+index: winlogbeat*
+num_events: 1
+timeframe:
+  hours: 1
+
+filter:
+- query:
+    query_string:
+      query: 
+        "winlog.event_data.ParentCommandLine : taskeng.exe"        
+- query:
+    query_string:
+      query: "winlog.event_data.CommandLine : *.vbe OR 
+      winlog.event_data.CommandLine : *.vbs"
+
+alert:
+- telegram:
+    telegram_room_id: <REDACTED>
+- telegram:
+    telegram_room_id: <REDACTED>
+telegram_bot_token: <REDACTED>
+alert_text_type: alert_text_only
+alert_subject: "Regra 03 detectada"
+alert_text: 
+  "\n\nTask Scheduler Engine executou um VBScript.\n
+  O usuario {0}\n 
+  ip: {1}\n 
+  Event.Action: {4}\n
+  CommandLine:\n {3}\n
+  ParentCommandLine:\n {2}\n
+  Event_id: {5}"
+alert_text_args:
+- agent.hostname
+- host.ip[1]
+- winlog.event_data.ParentCommandLine
+- winlog.event_data.CommandLine
+- event.action
+- winlog.event_id
+

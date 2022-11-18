@@ -1,0 +1,26 @@
+title: Apt33 Elfin Typical Connect Ports
+id: na
+status: test
+description: Non-Standard port used by APT33 Elfin
+author: renatocraf
+date: 2022/10/25
+references:
+   - https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/elfin-apt33-espionage
+logsource:
+   category: network_connection
+   product: windows   
+detection:
+    selection:
+        DestinationPort: 
+            - 880
+            - 8088
+            - 808
+            - 2020
+    condition: selection
+falsepositives:
+   - Unknown
+level: medium
+tags:
+   - attack.command_and_control
+   - attack.t1571
+   - attack.g0064

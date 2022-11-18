@@ -1,0 +1,46 @@
+# Comando e Controle - PoshC2
+# Regra 09: Compressão de arquivos utilizando winrar pelo powershell
+name: regra9
+type: any
+realert:
+  minutes : 0
+index: winlogbeat*
+num_events: 1
+timeframe:
+  hours: 1
+
+filter:
+- query:
+    query_string:
+      query: 
+        "winlog.event_data.ParentCommandLine : powershell.exe OR
+        winlog.event_data.ParentCommandLine : cmd.exe"               
+- query:
+    query_string:
+      query: "winlog.event_data.CommandLine : *.rar"
+- query:
+    query_string:
+      query: "winlog.event_data.Product: WinRAR"
+
+
+alert:
+- telegram:
+    telegram_room_id: <REDACTED>
+- telegram:
+    telegram_room_id: <REDACTED>
+telegram_bot_token: <REDACTED>
+alert_text_type: alert_text_only
+alert_subject: "Regra 09 detectada"
+alert_text: 
+  "\n\nO usuario {0}, 
+  ip: {1}\nevent {3}, 
+  Event.id: {4}\n
+  Message:\n {2}\n
+  Loglevel: {3}"
+alert_text_args:
+- agent.hostname
+- host.ip[1]
+- message
+- event.action
+- winlog.event_id
+

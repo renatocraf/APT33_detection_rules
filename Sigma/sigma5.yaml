@@ -1,0 +1,36 @@
+title: WScript or CScript create a powershell script file.
+id: na
+status: test
+description: The recipient clicked the link and proceeded to download and open a malicious HTML executable file . At the same time, code embedded within this file also executed a PowerShell command to download and execute a copy of chfeeds.vbe from the C&C server. Payload encoded in base64.
+author: renatocraf
+date: 2022/10/25
+references:
+   - https://www.mandiant.com/resources/blog/apt33-insights-into-iranian-cyber-espionage
+   - https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/elfin-apt33-espionage
+   - https://www.microsoft.com/en-us/security/blog/2020/06/18/inside-microsoft-threat-protection-mapping-attack-chains-from-cloud-to-endpoint/
+   - https://www.mandiant.com/resources/blog/overruled-containing-a-potentially-destructive-adversary
+logsource:
+   category: file_event
+   product: windows   
+detection:
+    selection:
+        EventAction|contains: 
+            - 'filecreate'
+        TargetFilename|endswith:
+            - '.ps1'
+        Image|contains:
+            - 'WScript.exe'
+            - 'CScript.exe'
+    condition: selection
+fields: 
+   - EventAction
+   - TargetFilename
+   - Image
+falsepositives:
+   - Unknown
+level: medium
+tags:
+   - attack.execution
+   - attack.t1059.005
+   - attack.t1059.001
+   - attack.g0064

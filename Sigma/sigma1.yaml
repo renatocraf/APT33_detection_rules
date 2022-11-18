@@ -1,0 +1,42 @@
+title: Powershell process if parent process is a browser
+id: na
+status: test
+description: The recipient clicked the link and proceeded to download and open a malicious HTML executable file . At the same time, code embedded within this file also executed a PowerShell command to download and execute a copy of chfeeds.vbe from the C&C server. Payload encoded in base64.
+author: renatocraf
+date: 2022/10/25
+references:
+   - https://www.mandiant.com/resources/blog/apt33-insights-into-iranian-cyber-espionage
+   - https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/elfin-apt33-espionage
+   - https://www.microsoft.com/en-us/security/blog/2020/06/18/inside-microsoft-threat-protection-mapping-attack-chains-from-cloud-to-endpoint/
+   - https://www.mandiant.com/resources/blog/overruled-containing-a-potentially-destructive-adversary
+   - https://nvd.nist.gov/vuln/detail/CVE-2017-11774
+logsource:
+   category: process_creation
+   product: windows   
+detection:
+    selection:
+        ParentCommandLine|contains: 
+            - '\iexplore.exe'
+            - '\firefox.exe'
+            - '\chrome.exe'
+            - '\opera.exe'
+        CommandLine|contains:
+            - '\cmd.exe'
+            - '\powershell.exe'
+            - '\wscript.exe'
+            - '\cscript.exe'
+            - '\wmic.exe'
+    selection2:
+        CommandLine|contains:
+            - 'FromBase64String'
+    condition: selection and selection2
+fields: 
+   - CommandLine
+   - ParentCommandLine
+falsepositives:
+   - Unknown
+level: high
+tags:
+   - attack.execution
+   - attack.t1059.005
+   - attack.g0064

@@ -1,0 +1,33 @@
+title: Taskeng.exe process executing VBScript
+id: na
+status: test
+description: The recipient clicked the link and proceeded to download and open a malicious HTML executable file . At the same time, code embedded within this file also executed a PowerShell command to download and execute a copy of chfeeds.vbe from the C&C server. Payload encoded in base64.
+author: renatocraf
+date: 2022/10/25
+references:
+   - https://www.mandiant.com/resources/blog/apt33-insights-into-iranian-cyber-espionage
+   - https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/elfin-apt33-espionage
+   - https://www.microsoft.com/en-us/security/blog/2020/06/18/inside-microsoft-threat-protection-mapping-attack-chains-from-cloud-to-endpoint/
+   - https://www.mandiant.com/resources/blog/overruled-containing-a-potentially-destructive-adversary
+logsource:
+   category: process_creation
+   product: windows   
+detection:
+    selection:
+        ParentCommandLine|contains: 
+            - 'taskeng.exe'
+        CommandLine|contains:
+            - '.vbs'
+            - '.vbe'
+    condition: selection
+fields: 
+   - CommandLine
+   - ParentCommandLine
+falsepositives:
+   - Unknown
+level: medium
+tags:
+   - attack.persistence
+   - attack.t1059.005
+   - attack.t1059.001
+   - attack.g0064
